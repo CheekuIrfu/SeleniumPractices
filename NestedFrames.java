@@ -2,14 +2,11 @@ package org.example;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 public class NestedFrames {
     public static void main(String[] args) {
@@ -18,39 +15,29 @@ public class NestedFrames {
         options.addArguments("--disable-extensions");
         options.addArguments("--remote-allow-origins=*");
 
+        // Setup WebDriver
         WebDriverManager.chromedriver().setup();
         WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10)); // Implicit wait
+        driver.manage().window().maximize();
 
         try {
-            // Open google.com
-            driver.get("https://www.google.com");
-
-            // Open DEMOQA website
+            // Step 1: Open DEMOQA.com
             driver.get("https://demoqa.com");
 
-            // Open the Alerts, Frame & Windows section
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement alertsFrameWindows = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='app']/div/div/div[2]/div/div[3]")));
-            alertsFrameWindows.click();
+            // Step 2: Click "Alerts, Frame & Windows" using text-based XPath
+            WebElement alertsFramesWindowsOption = driver.findElement(By.xpath("//*[text()='Alerts, Frame & Windows']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", alertsFramesWindowsOption);
+            alertsFramesWindowsOption.click();
+            Thread.sleep(1000); // Wait for the page to load
 
-            // Navigate to alerts windows URL
-            driver.get("https://demoqa.com/alertsWindows");
-
-            // Click the Alerts, Frame & Windows option
-            WebElement alertsOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='app']/div/div/div/div[1]/div/div/div[3]/span/div/div[1]")));
-            alertsOption.click();
-
-            // Click the Nested Frames option
-            WebElement nestedFramesOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='item-3']")));
+            // Step 3: Click "Nested Frames" option using text-based XPath
+            WebElement nestedFramesOption = driver.findElement(By.xpath("//*[text()='Nested Frames']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", nestedFramesOption);
             nestedFramesOption.click();
+            Thread.sleep(1000); // Wait for the page to load
 
-            // Navigate to Nested Frames URL
-            driver.get("https://demoqa.com/nestedframes");
-
-            // Optionally, print the current URL
-            System.out.println("Current URL: " + driver.getCurrentUrl());
-
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             // Close the browser
             driver.quit();

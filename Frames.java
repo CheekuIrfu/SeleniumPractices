@@ -2,15 +2,11 @@ package org.example;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 public class Frames {
     public static void main(String[] args) {
@@ -19,30 +15,29 @@ public class Frames {
         options.addArguments("--disable-extensions");
         options.addArguments("--remote-allow-origins=*");
 
+        // Setup WebDriver
         WebDriverManager.chromedriver().setup();
         WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS); // Implicit wait
+        driver.manage().window().maximize();
 
         try {
-            // Open google.com
-            driver.get("https://www.google.com");
-
-            // Open DEMOQA website
+            // Step 1: Open DEMOQA.com
             driver.get("https://demoqa.com");
 
-            // Click the "Alerts, Frame & Windows" option
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement alertsFrameWindowsOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='app']/div/div/div[2]/div/div[3]")));
-            alertsFrameWindowsOption.click();
+            // Step 2: Click "Alerts, Frame & Windows" using text-based XPath
+            WebElement alertsFramesWindowsOption = driver.findElement(By.xpath("//*[text()='Alerts, Frame & Windows']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", alertsFramesWindowsOption);
+            alertsFramesWindowsOption.click();
+            Thread.sleep(1000); // Wait for the page to load
 
-            // Click the "Frames" option
-            WebElement framesOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='item-2']")));
+            // Step 3: Click "Frames" option using text-based XPath
+            WebElement framesOption = driver.findElement(By.xpath("//*[text()='Frames']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", framesOption);
             framesOption.click();
+            Thread.sleep(1000); // Wait for the page to load
 
-            // Verify that we navigated to the content using the specified XPath
-            WebElement content = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='app']/div/div/div/div[2]")));
-            System.out.println("Navigated to the Frames page and found the content.");
-
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             // Close the browser
             driver.quit();

@@ -2,14 +2,11 @@ package org.example;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 public class Accordian {
     public static void main(String[] args) {
@@ -18,32 +15,47 @@ public class Accordian {
         options.addArguments("--disable-extensions");
         options.addArguments("--remote-allow-origins=*");
 
+        // Setup WebDriver
         WebDriverManager.chromedriver().setup();
         WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10)); // Implicit wait
+        driver.manage().window().maximize();
 
         try {
-            // Step 1: Open google.com
-            driver.get("https://www.google.com");
+            // Step 1: Open DEMOQA.com
+            driver.get("https://demoqa.com");
 
-            // Step 2: Open DEMOQA website
-            driver.get("https://demoqa.com/");
-
-            // Step 3: Click the Widgets option
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement widgetsOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='app']/div/div/div[2]/div/div[4]")));
+            // Step 2: Click "Widgets" using text-based XPath
+            WebElement widgetsOption = driver.findElement(By.xpath("//*[text()='Widgets']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", widgetsOption);
             widgetsOption.click();
+            Thread.sleep(1000); // Wait for the page to load
 
-            // Step 4: Navigate to Widgets URL
-            driver.get("https://demoqa.com/widgets");
+            // Step 3: Click "Accordian" option using text-based XPath
+            WebElement accordianOption = driver.findElement(By.xpath("//*[text()='Accordian']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", accordianOption);
+            accordianOption.click();
+            Thread.sleep(1000); // Wait for the page to load
 
-            // Step 5: Click the Accordion option
-            WebElement accordionOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='item-0']")));
-            accordionOption.click();
+            // Step 4: Click the first box using the provided XPath
+            WebElement section1Heading = driver.findElement(By.xpath("//*[@id='section1Heading']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", section1Heading);
+            section1Heading.click();
+            Thread.sleep(1000); // Wait for the action to complete
 
-            // Step 6: Navigate to the Accordion page
-            driver.get("https://demoqa.com/accordian");
+            // Step 5: Click the second box using the provided XPath
+            WebElement section2Heading = driver.findElement(By.xpath("//*[@id='section2Heading']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", section2Heading);
+            section2Heading.click();
+            Thread.sleep(1000); // Wait for the action to complete
 
+            // Step 6: Click the third box using the provided XPath
+            WebElement section3Heading = driver.findElement(By.xpath("//*[@id='section3Heading']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", section3Heading);
+            section3Heading.click();
+            Thread.sleep(1000); // Wait for the action to complete
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             // Close the browser
             driver.quit();
